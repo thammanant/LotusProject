@@ -1,10 +1,13 @@
 import os
+import random
 import database
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, status, Request, HTTPException, Depends
 import decryption
 from fastapi.responses import RedirectResponse
 import requests
+from dotenv import load_dotenv
+import services
 
 router = APIRouter(
     prefix="/Lotus's_Project",
@@ -13,60 +16,42 @@ router = APIRouter(
 
 get_db = database.getDB
 decryption = decryption.Decryption()
-# LINE Login settings
+load_dotenv()
+
 LINE_LOGIN_CHANNEL_ID = os.getenv('LINE_LOGIN_CHANNEL_ID')
 LINE_LOGIN_CHANNEL_SECRET = os.getenv('LINE_LOGIN_CHANNEL_SECRET')
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
 REDIRECT_URI = os.getenv('REDIRECT_URI')
-STATE = 12345
-# bottle info
-global num_bottles
-# userID
+
+global points
 global userID
-
-
-def send_message(user_id, message):
-    # Construct the request payload
-    payload = {
-        'to': user_id,
-        'messages': [
-            {
-                'type': 'text',
-                'text': message
-            }
-        ]
-    }
-
-    # Send the request to the LINE Messaging API
-    url = 'https://api.line.me/v2/bot/message/push'
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {LINE_CHANNEL_ACCESS_TOKEN}'
-    }
-    response = requests.post(url, json=payload, headers=headers)
-
-    if response.status_code != 200:
-        print("Failed to send message:", response.json())
+global currentTransactionID
 
 
 # new bottles transaction
 @router.post('/newBottleTransaction', status_code=status.HTTP_201_CREATED)
-async def newBottleTransaction(bottleNumber: str, db: Session = Depends(get_db)):
-    global num_bottles
-    num_bottles = decryption.decrypt(bottleNumber)
+async def newBottleTransaction(bottleNumber: str, location: str, db: Session = Depends(get_db)):
+    global points, currentTransactionID
+    # decrypt the number of bottles and store it in num_bottles
+    points = decryption.decrypt(bottleNumber)
+    # create a new transaction
+    currentTransactionID = services.new_transaction(points, location, db)
+    # random state number
+    STATE = random.randint(1000, 9999)
+    # compose line login url
     line_login_url = (
         f"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={LINE_LOGIN_CHANNEL_ID}"
-        f"&redirect_uri={REDIRECT_URI}&state=12345&scope=openid%20profile")
-    # change state TODO
+        f"&redirect_uri={REDIRECT_URI}&state={STATE}&scope=openid%20profile")
     print(line_login_url)
     return RedirectResponse(line_login_url)
 
 
 # callback
 @router.get('/callback', status_code=status.HTTP_200_OK)
-async def callback(request: Request):
-    global userID  # Consider avoiding global variables if possible
+def callback(request: Request, db: Session = Depends(get_db)):
+    global userID
 
+    # Get the authorization code from the query string
     code = request.query_params.get("code")
     if not code:
         raise HTTPException(status_code=400, detail="Authorization code not found")
@@ -90,7 +75,11 @@ async def callback(request: Request):
 
         if profile_response.status_code == 200:
             userID = profile_response.json()["userId"]
-            await send_message(userID, "Hello, World!")  # Assuming send_message is async
+            # check if user already exists, if not, add new user, else, add new transaction
+            services.check_user(userID, currentTransactionID, db)
+            # send message to user
+            services.send_message(userID, f"You have {points} bottles", LINE_CHANNEL_ACCESS_TOKEN, requests)
+            # redirect to success page
             return RedirectResponse("/success")
         else:
             raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
