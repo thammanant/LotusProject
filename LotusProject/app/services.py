@@ -55,6 +55,7 @@ def check_user(userID, transactionID, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     if not user:
         add_new_user(userID, db)
+        map_user_transaction(userID, transactionID, db)
     else:
         map_user_transaction(userID, transactionID, db)
 

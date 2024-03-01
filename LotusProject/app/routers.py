@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import services
 
 router = APIRouter(
-    prefix="/Lotus's_Project",
+    prefix="/Lotus_Project",
     tags=['APIs']
 )
 
@@ -80,7 +80,7 @@ def callback(request: Request, db: Session = Depends(get_db)):
             # send message to user
             services.send_message(userID, f"You have {points} bottles", LINE_CHANNEL_ACCESS_TOKEN, requests)
             # redirect to success page
-            return RedirectResponse("/success")
+            return RedirectResponse("/Lotus_Project/success")
         else:
             raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
     else:
