@@ -79,13 +79,15 @@ def check_user(userID, transactionID, points, db):
 # check if user have the required points to redeem
 def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
+    # for item egg only
     if user.totalPoints >= 10:
         # generate redemptionID
+        # TODO
         redemptionRef = db.query(Redemption).count() + 1
         # deduct 10 points
         user.totalPoints -= 10
         # add redemption record
-        redemption = Redemption(redemptionID=redemptionRef,userID=userID, itemID=1, date=datetime.now())
+        redemption = Redemption(redemptionID=redemptionRef, userID=userID, itemID=1, date=datetime.now())
         db.add(redemption)
         db.commit()
         # send message to user
