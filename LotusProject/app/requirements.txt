@@ -1,6 +1,6 @@
 sqlalchemy
 fastapi
-uvicorn
 psycopg2-binary
 requests
 python-dotenv
+cryptography

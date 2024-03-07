@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import services
 
 router = APIRouter(
-    prefix="/Lotus_Project",
+    prefix="/APIs",
     tags=['APIs']
 )
 
@@ -49,7 +49,7 @@ async def newBottleTransaction(bottleNumber: str, location: str, db: Session = D
 # callback
 @router.get('/callback', status_code=status.HTTP_200_OK)
 def callback(request: Request, db: Session = Depends(get_db)):
-    global userID
+    global userID, points
 
     # Get the authorization code from the query string
     code = request.query_params.get("code")
@@ -76,18 +76,39 @@ def callback(request: Request, db: Session = Depends(get_db)):
         if profile_response.status_code == 200:
             userID = profile_response.json()["userId"]
             # check if user already exists, if not, add new user, else, add new transaction
-            services.check_user(userID, currentTransactionID, db)
+            services.check_user(userID, currentTransactionID, points, db)
+            # get total points
+            totalPoints = services.get_all_points(userID, db)
             # send message to user
-            services.send_message(userID, f"You have {points} bottles", LINE_CHANNEL_ACCESS_TOKEN, requests)
+            services.send_message(userID, f"You have {points} bottles, You have total of {totalPoints}",
+                                  LINE_CHANNEL_ACCESS_TOKEN, requests)
             # redirect to success page
-            return RedirectResponse("/Lotus_Project/success")
+            return RedirectResponse("/APIs/success")
         else:
             raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
     else:
         raise HTTPException(status_code=500, detail="Failed to exchange authorization code for access token")
 
 
+# Webhook
+# TODO
+@router.post('/webhook', status_code=status.HTTP_200_OK)
+def webhook(request: Request, db: Session = Depends(get_db)):
+    request_body = request.json()
+    # get user id
+    user_id = request_body['events'][0]['source']['userId']
+    services.redeemable(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
+    # redirect to redeem page
+    return RedirectResponse("/APIs/redeem")
+
+
 # Login successfully
 @router.get('/success', status_code=status.HTTP_200_OK)
 async def success():
     return {"message": "Login successfully"}
+
+
+# Redeem successfully
+@router.get('/redeem', status_code=status.HTTP_200_OK)
+async def redeem():
+    return {"message": "You can close this page"}

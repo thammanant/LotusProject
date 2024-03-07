@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import UserInfo, Transactions, UserTransactions
+from models import UserInfo, Transactions, UserTransactions, Redemption
 
 
 def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
@@ -50,13 +50,47 @@ def map_user_transaction(userID, transactionID, db):
     return 'created'
 
 
+def add_points(userID, points, db):
+    user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
+    user.totalPoints += int(points)
+    db.commit()
+    return 'created'
+
+
+def get_all_points(userID, db):
+    user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
+    return user.totalPoints
+
+
 # check if user already exists, if not, add new user, else, add new transaction
-def check_user(userID, transactionID, db):
+def check_user(userID, transactionID, points, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     if not user:
         add_new_user(userID, db)
         map_user_transaction(userID, transactionID, db)
+
     else:
         map_user_transaction(userID, transactionID, db)
 
+    add_points(userID, points, db)
     return 'created'
+
+
+# check if user have the required points to redeem
+def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
+    user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
+    if user.totalPoints >= 10:
+        # generate redemptionID
+        redemptionRef = db.query(Redemption).count() + 1
+        # deduct 10 points
+        user.totalPoints -= 10
+        # add redemption record
+        redemption = Redemption(redemptionID=redemptionRef,userID=userID, itemID=1, date=datetime.now())
+        db.add(redemption)
+        db.commit()
+        # send message to user
+        send_message(userID, f"You have redeemed 1 item", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        return True
+    else:
+        send_message(userID, f"You do not have enough points to redeem", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        return False
