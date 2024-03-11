@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import time
 
 # use PostgresSQL
-SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:postgres@lotusproject-db:5432/lotus'
+# SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:postgres@lotusproject-db:5432/lotus'
+SQLALCHEMY_DATABASE_URL = 'postgresql://postgres@localhost:5432/lotus'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

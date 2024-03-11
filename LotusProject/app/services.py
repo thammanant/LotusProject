@@ -26,6 +26,67 @@ def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
         print("Failed to send message:", response.json())
 
 
+def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
+    payload = {
+        'to': user_id,
+        'messages': [
+            {
+                "type": "flex",
+                "altText": "This is a Flex Message",
+                "contents": {
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://img.freepik.com/free-vector/detailed-point-exchange_23-2148845560.jpg?w=1480"
+                               "&t=st=1709981242~exp=1709981842~hmac"
+                               "=985a6b4705e20a1c865ae97b173e56419ea3a120ba849f5415fc3203be371ce9",
+                        "size": "full",
+                        "aspectRatio": "20:13"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "baseline",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": "สะสม 10 ขวดเพื่อแลกรางวัล",
+                                "size": "md",
+                                "weight": "regular",
+                                "align": "center"
+                            }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "button",
+                                "action": {
+                                    "type": "uri",
+                                    "label": "Redeem",
+                                    "uri": "http://0.0.0.0:8000/APIs/redeem"
+                                },
+                                "style": "link"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+
+    url = 'https://api.line.me/v2/bot/message/push'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {LINE_CHANNEL_ACCESS_TOKEN}'
+    }
+    response = requests.post(url, json=payload, headers=headers)
+
+    if response.status_code != 200:
+        print("Failed to send message:", response.json())
+
+
 def add_new_user(userID, db):
     user = UserInfo(userID=userID, accountType='LINE', totalPoints=0)
     db.add(user)
@@ -83,16 +144,14 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     if user.totalPoints >= 10:
         # generate redemptionID
         # TODO
-        redemptionRef = db.query(Redemption).count() + 1
+        # redemptionRef =
         # deduct 10 points
         user.totalPoints -= 10
         # add redemption record
-        redemption = Redemption(redemptionID=redemptionRef, userID=userID, itemID=1, date=datetime.now())
+        redemption = Redemption(userID=userID, itemID=1, date=datetime.now())
         db.add(redemption)
         db.commit()
         # send message to user
         send_message(userID, f"You have redeemed 1 item", LINE_CHANNEL_ACCESS_TOKEN, requests)
-        return True
-    else:
-        send_message(userID, f"You do not have enough points to redeem", LINE_CHANNEL_ACCESS_TOKEN, requests)
-        return False
+        send_message(userID, f"You have {user.totalPoints} bottles left", LINE_CHANNEL_ACCESS_TOKEN, requests)
+

@@ -82,24 +82,16 @@ def callback(request: Request, db: Session = Depends(get_db)):
             # send message to user
             services.send_message(userID, f"You have {points} bottles, You have total of {totalPoints}",
                                   LINE_CHANNEL_ACCESS_TOKEN, requests)
+            # check if user can redeem
+            if totalPoints >= 10:
+                # send message to user
+                services.send_flex_message(userID, LINE_CHANNEL_ACCESS_TOKEN, requests)
             # redirect to success page
             return RedirectResponse("/APIs/success")
         else:
             raise HTTPException(status_code=500, detail="Failed to retrieve user profile")
     else:
         raise HTTPException(status_code=500, detail="Failed to exchange authorization code for access token")
-
-
-# Webhook
-# TODO
-@router.post('/webhook', status_code=status.HTTP_200_OK)
-def webhook(request: Request, db: Session = Depends(get_db)):
-    request_body = request.json()
-    # get user id
-    user_id = request_body['events'][0]['source']['userId']
-    services.redeemable(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
-    # redirect to redeem page
-    return RedirectResponse("/APIs/redeem")
 
 
 # Login successfully
@@ -110,5 +102,6 @@ async def success():
 
 # Redeem successfully
 @router.get('/redeem', status_code=status.HTTP_200_OK)
-async def redeem():
+async def redeem(db: Session = Depends(get_db)):
+    services.redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
     return {"message": "You can close this page"}
