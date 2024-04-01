@@ -164,8 +164,7 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         # deduct 10 points
         user.totalPoints -= 10
         # add redemption record
-        redemption = Redemption(userID=userID, itemID=1, date=datetime.now())
-        # redemption.redemptionID = referenceCode
+        redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, date=datetime.now())
         # get item name
         item = db.query(ItemList).filter(ItemList.itemID == 1).first()
         name = item.itemName

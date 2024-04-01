@@ -37,7 +37,7 @@ class ItemList(Base):
 class Redemption(Base):
     __tablename__ = "Redemption"
 
-    redemptionID = Column(Integer, primary_key=True, index=True)
+    redemptionID = Column(String, primary_key=True, index=True)
     userID = Column(String, ForeignKey('User_Information.userID'))
     itemID = Column(Integer, ForeignKey('Item_List.itemID'))
     date = Column(DateTime)
