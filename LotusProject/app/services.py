@@ -1,6 +1,19 @@
 from datetime import datetime
-
 from app.models import Transactions, UserInfo, UserTransactions, Redemption, ItemList
+import random, string
+
+
+def generate_code():
+    chars_uppercase = string.ascii_uppercase
+    chars_digits = string.digits
+
+    # Generate random uppercase letters
+    code = ''.join(random.choice(chars_uppercase) for _ in range(3))
+
+    # Generate random digits
+    code += ''.join(random.choice(chars_digits) for _ in range(3))
+
+    return code
 
 
 def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
@@ -143,8 +156,11 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     # for item egg only
     if user.totalPoints >= 10:
-        # TODO: generate redemptionID
-        referenceCode = "REF1"
+        while True:
+            referenceCode = generate_code()
+            redemption = db.query(Redemption).filter(Redemption.redemptionID == referenceCode).first()
+            if not redemption:
+                break
         # deduct 10 points
         user.totalPoints -= 10
         # add redemption record
