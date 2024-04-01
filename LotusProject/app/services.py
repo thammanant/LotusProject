@@ -1,5 +1,6 @@
 from datetime import datetime
-from models import UserInfo, Transactions, UserTransactions, Redemption
+
+from app.models import Transactions, UserInfo, UserTransactions, Redemption
 
 
 def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
@@ -154,4 +155,3 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         # send message to user
         send_message(userID, f"You have redeemed 1 item", LINE_CHANNEL_ACCESS_TOKEN, requests)
         send_message(userID, f"You have {user.totalPoints} bottles left", LINE_CHANNEL_ACCESS_TOKEN, requests)
-

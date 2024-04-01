@@ -1,21 +1,21 @@
 import os
 import random
-import database
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, status, Request, HTTPException, Depends
-import decryption
 from fastapi.responses import RedirectResponse
 import requests
 from dotenv import load_dotenv
-import services
+from app import services
+from app.database import getDB
+from app.decryption import Decryption
 
 router = APIRouter(
     prefix="/APIs",
     tags=['APIs']
 )
 
-get_db = database.getDB
-decryption = decryption.Decryption()
+get_db = getDB
+decryption = Decryption()
 load_dotenv()
 
 LINE_LOGIN_CHANNEL_ID = os.getenv('LINE_LOGIN_CHANNEL_ID')
