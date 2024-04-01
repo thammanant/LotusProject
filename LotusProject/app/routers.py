@@ -1,10 +1,14 @@
 import os
 import random
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, status, Request, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 import requests
 from dotenv import load_dotenv
+from starlette.responses import HTMLResponse
+
 from app import services
 from app.database import getDB
 from app.decryption import Decryption
@@ -97,11 +101,13 @@ def callback(request: Request, db: Session = Depends(get_db)):
 # Login successfully
 @router.get('/success', status_code=status.HTTP_200_OK)
 async def success():
-    return {"message": "Login successfully"}
+    html_content = Path('app/Login.html').read_text()
+    return HTMLResponse(content=html_content, status_code=200)
 
 
 # Redeem successfully
 @router.get('/redeem', status_code=status.HTTP_200_OK)
 async def redeem(db: Session = Depends(get_db)):
     services.redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
-    return {"message": "You can close this page"}
+    html_content = Path('app/Redeem.html').read_text()
+    return HTMLResponse(content=html_content, status_code=200)
