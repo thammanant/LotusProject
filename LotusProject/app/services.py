@@ -78,7 +78,7 @@ def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
                                 "type": "button",
                                 "action": {
                                     "type": "uri",
-                                    "label": "Redeem",
+                                    "label": "แลกรางวัล",
                                     "uri": "http://0.0.0.0:8000/APIs/redeem"
                                 },
                                 "style": "link"
