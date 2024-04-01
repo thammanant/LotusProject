@@ -143,18 +143,18 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     # for item egg only
     if user.totalPoints >= 10:
-        # generate redemptionID
-        # TODO
-        # redemptionRef =
+        # TODO: generate redemptionID
+        referenceCode = "REF1"
         # deduct 10 points
         user.totalPoints -= 10
         # add redemption record
         redemption = Redemption(userID=userID, itemID=1, date=datetime.now())
+        # redemption.redemptionID = referenceCode
         # get item name
         item = db.query(ItemList).filter(ItemList.itemID == 1).first()
         name = item.itemName
         db.add(redemption)
         db.commit()
         # send message to user
-        send_message(userID, f"You have redeemed 1 {name}", LINE_CHANNEL_ACCESS_TOKEN, requests)
-        send_message(userID, f"You have {user.totalPoints} bottles left", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        send_message(userID, f"คุณได้รับ 1 {name} - ยื่นรหัส {referenceCode} ให้พนักงานที่เคาน์เตอร์เพื่อรับรางวัลของคุณ", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)

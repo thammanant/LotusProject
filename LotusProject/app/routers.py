@@ -84,7 +84,7 @@ def callback(request: Request, db: Session = Depends(get_db)):
             # get total points
             totalPoints = services.get_all_points(userID, db)
             # send message to user
-            services.send_message(userID, f"You have {points} bottles, You have total of {totalPoints}",
+            services.send_message(userID, f"จำนวนขวดเพิ่ม {points} ขวด - จำนวนขวดทั้งหมดของคุณมี {totalPoints} ขวด",
                                   LINE_CHANNEL_ACCESS_TOKEN, requests)
             # check if user can redeem
             if totalPoints >= 10:

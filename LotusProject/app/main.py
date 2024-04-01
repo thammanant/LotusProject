@@ -11,7 +11,7 @@ models.Base.metadata.create_all(engine)
 app.include_router(routers.router)
 
 # pre populate the database
-item1 = ItemList(itemID=1, itemName='Egg', pointsRequired=10)
+item1 = ItemList(itemID=1, itemName='ไข่ไก่', pointsRequired=10)
 # commit the transaction
 with SessionLocal() as db:
     db.add(item1)
