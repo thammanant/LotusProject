@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.models import Transactions, UserInfo, UserTransactions, Redemption
+from app.models import Transactions, UserInfo, UserTransactions, Redemption, ItemList
 
 
 def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
@@ -150,8 +150,10 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         user.totalPoints -= 10
         # add redemption record
         redemption = Redemption(userID=userID, itemID=1, date=datetime.now())
+        # get item name
+        name = db.query(ItemList).filter(ItemList.itemID == 1).first()
         db.add(redemption)
         db.commit()
         # send message to user
-        send_message(userID, f"You have redeemed 1 item", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        send_message(userID, f"You have redeemed 1 {name}", LINE_CHANNEL_ACCESS_TOKEN, requests)
         send_message(userID, f"You have {user.totalPoints} bottles left", LINE_CHANNEL_ACCESS_TOKEN, requests)
