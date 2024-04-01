@@ -156,5 +156,5 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         db.add(redemption)
         db.commit()
         # send message to user
-        send_message(userID, f"คุณได้รับ 1 {name} - ยื่นรหัส {referenceCode} ให้พนักงานที่เคาน์เตอร์เพื่อรับรางวัลของคุณ", LINE_CHANNEL_ACCESS_TOKEN, requests)
+        send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
         send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
