@@ -151,7 +151,8 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         # add redemption record
         redemption = Redemption(userID=userID, itemID=1, date=datetime.now())
         # get item name
-        name = db.query(ItemList).filter(ItemList.itemID == 1).first()
+        item = db.query(ItemList).filter(ItemList.itemID == 1).first()
+        name = item.itemName
         db.add(redemption)
         db.commit()
         # send message to user
