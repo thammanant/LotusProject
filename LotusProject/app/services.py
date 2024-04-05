@@ -79,7 +79,7 @@ def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
                                 "action": {
                                     "type": "uri",
                                     "label": "แลกรางวัล",
-                                    "uri": "http://167.71.216.155:8000/APIs/redeem"
+                                    "uri": "http://167.71.216.155:8000/APIs/redeemable"
                                 },
                                 "style": "link"
                             }
