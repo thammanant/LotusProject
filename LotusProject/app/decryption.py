@@ -10,10 +10,10 @@ class Decryption:
 
     def decrypt(self, encrypted_message):
         # TODO remove comments and return when done testing
-        # encrypted_message = [encrypted_message]
-        # decrypted_message = [chr(pow(char, self.d, self.n)) for char in encrypted_message]
-        # return ''.join(decrypted_message)
-        return encrypted_message
+        encrypted_message = [encrypted_message]
+        decrypted_message = [chr(pow(char, self.d, self.n)) for char in encrypted_message]
+        return ''.join(decrypted_message)
+        # return encrypted_message
 
 
 # if __name__ == "__main__":
