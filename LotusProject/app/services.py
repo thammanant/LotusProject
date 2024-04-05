@@ -173,3 +173,24 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
         # send message to user
         send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
         send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
+
+
+# Clear all data
+def clear(db):
+    db.query(UserInfo).delete()
+    db.query(Transactions).delete()
+    db.query(UserTransactions).delete()
+    db.query(Redemption).delete()
+    db.query(ItemList).delete()
+    db.commit()
+
+
+# Show all data in tables format
+def show_all(db):
+    users = db.query(UserInfo).all()
+    transactions = db.query(Transactions).all()
+    user_transactions = db.query(UserTransactions).all()
+    redemptions = db.query(Redemption).all()
+    items = db.query(ItemList).all()
+
+    return users, transactions, user_transactions, redemptions, items

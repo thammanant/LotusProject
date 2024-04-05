@@ -109,5 +109,25 @@ async def success():
 @router.get('/redeem', status_code=status.HTTP_200_OK)
 async def redeem(db: Session = Depends(get_db)):
     services.redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
-    html_content = Path('app/Redeem.html').read_text()
-    return HTMLResponse(content=html_content, status_code=200)
+    # check if user have enough points to redeem
+    user = db.query(services.UserInfo).filter(services.UserInfo.userID == userID).first()
+    if user.totalPoints >= 10:
+        html_content = Path('app/Redeemed.html').read_text()
+        return HTMLResponse(content=html_content, status_code=200)
+    else:
+        html_content = Path('app/NotEnoughPoints.html').read_text()
+        return HTMLResponse(content=html_content, status_code=200)
+
+
+# Clear all data
+@router.get('/clear', status_code=status.HTTP_200_OK)
+async def clear(db: Session = Depends(get_db)):
+    services.clear(db)
+    return 'cleared'
+
+
+# Show all data in tables format
+@router.get('/show', status_code=status.HTTP_200_OK)
+async def show(db: Session = Depends(get_db)):
+    services.show_all(db)
+    return 'showed'
