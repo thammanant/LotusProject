@@ -152,27 +152,25 @@ def check_user(userID, transactionID, points, db):
 
 
 # check if user have the required points to redeem
-def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
+def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
-    # for item egg only
-    if user.totalPoints >= 10:
-        while True:
-            referenceCode = generate_code()
-            redemption = db.query(Redemption).filter(Redemption.redemptionID == referenceCode).first()
-            if not redemption:
-                break
-        # deduct 10 points
-        user.totalPoints -= 10
-        # add redemption record
-        redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, date=datetime.now())
-        # get item name
-        item = db.query(ItemList).filter(ItemList.itemID == 1).first()
-        name = item.itemName
-        db.add(redemption)
-        db.commit()
-        # send message to user
-        send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
-        send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
+    while True:
+        referenceCode = generate_code()
+        redemption = db.query(Redemption).filter(Redemption.redemptionID == referenceCode).first()
+        if not redemption:
+            break
+    # deduct 10 points
+    user.totalPoints -= 10
+    # add redemption record
+    redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, date=datetime.now())
+    # get item name
+    item = db.query(ItemList).filter(ItemList.itemID == 1).first()
+    name = item.itemName
+    db.add(redemption)
+    db.commit()
+    # send message to user
+    send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
+    send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
 
 
 # Clear all data
