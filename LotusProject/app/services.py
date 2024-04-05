@@ -163,11 +163,12 @@ def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     user.totalPoints -= 10
     # add redemption record
     redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, date=datetime.now())
-    # get item name
-    item = db.query(ItemList).filter(ItemList.itemID == 1).first()
-    name = item.itemName
     db.add(redemption)
     db.commit()
+
+    # get item name from itemID
+    item = db.query(ItemList).filter(ItemList.itemID == redemption.itemID).first()
+    name = item.itemName
     # send message to user
     send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
     send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
