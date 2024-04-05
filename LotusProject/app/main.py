@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app import models
-from app.database import engine, SessionLocal, getDB
+from app.database import engine, SessionLocal
 import app.routers as routers
 from app.models import ItemList
 
@@ -10,12 +10,17 @@ models.Base.metadata.create_all(engine)
 
 app.include_router(routers.router)
 
-# pre populate the database
-item1 = ItemList(itemID=1, itemName='ไข่ไก่', pointsRequired=10)
-# commit the transaction
+# check if the database is empty
 with SessionLocal() as db:
-    db.add(item1)
-    db.commit()
+    item = db.query(ItemList).first()
+    # if empty, add items
+    if not item:
+        # pre populate the database
+        item1 = ItemList(itemID=1, itemName='ไข่ไก่', pointsRequired=10)
+        # commit the transaction
+        with SessionLocal() as db:
+            db.add(item1)
+            db.commit()
 
 # if __name__ == "__main__":
 #     import uvicorn
