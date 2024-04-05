@@ -111,12 +111,12 @@ async def redeem(db: Session = Depends(get_db)):
     services.redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
     # check if user have enough points to redeem
     user = db.query(services.UserInfo).filter(services.UserInfo.userID == userID).first()
-    if user.totalPoints >= 10:
-        html_content = Path('app/Redeemed.html').read_text()
-        return HTMLResponse(content=html_content, status_code=200)
-    else:
+    if user.totalPoints < 10:
         html_content = Path('app/NotEnoughPoints.html').read_text()
         return HTMLResponse(content=html_content, status_code=200)
+    html_content = Path('app/Redeemed.html').read_text()
+    return HTMLResponse(content=html_content, status_code=200)
+
 
 
 # Clear all data
