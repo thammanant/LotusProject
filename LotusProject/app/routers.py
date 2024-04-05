@@ -129,5 +129,4 @@ async def clear(db: Session = Depends(get_db)):
 # Show all data in tables format
 @router.get('/show', status_code=status.HTTP_200_OK)
 async def show(db: Session = Depends(get_db)):
-    services.show_all(db)
-    return 'showed'
+    return services.show_all(db)

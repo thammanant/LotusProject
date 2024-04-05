@@ -177,10 +177,11 @@ def redeemable(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
 
 # Clear all data
 def clear(db):
-    db.query(UserInfo).delete()
-    db.query(Transactions).delete()
+    # clear the foreign key table first
     db.query(UserTransactions).delete()
     db.query(Redemption).delete()
+    db.query(Transactions).delete()
+    db.query(UserInfo).delete()
     db.query(ItemList).delete()
     db.commit()
 
