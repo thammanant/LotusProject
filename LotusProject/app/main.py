@@ -17,10 +17,9 @@ with SessionLocal() as db:
     if not item:
         # pre populate the database
         item1 = ItemList(itemID=1, itemName='ไข่ไก่', pointsRequired=10)
-        # commit the transaction
-        with SessionLocal() as db:
-            db.add(item1)
-            db.commit()
+
+        db.add(item1)
+        db.commit()
 
 # if __name__ == "__main__":
 #     import uvicorn
