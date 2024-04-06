@@ -1,24 +1,17 @@
 import os
 from dotenv import load_dotenv
+import jwt
 
 
 class Decryption:
     def __init__(self):
         load_dotenv()
-        key = os.getenv('KEY')
-        self.n, self.d = [int(x, 16) for x in key.split(',')]
+        self.key = os.getenv('KEY')
 
     def decrypt(self, encrypted_message):
-        # separate by %2C
-        encrypted_message = encrypted_message.split('%2C')
-        print(encrypted_message)
-        decrypted_message = []
-        for i in encrypted_message:
-            i = int(i)
-            decrypted_message.append(chr(pow(i, self.d, self.n)))
-
-        return ''.join(decrypted_message)
-        # return encrypted_message
+        # decrypt the data using the key
+        decode = jwt.decode(encrypted_message, self.key, algorithms=['HS256'])
+        return decode
 
 
 # if __name__ == "__main__":

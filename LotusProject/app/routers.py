@@ -33,11 +33,13 @@ global currentTransactionID
 
 
 # new bottles transaction
-@router.post('/newBottleTransaction', status_code=status.HTTP_201_CREATED)
-async def newBottleTransaction(bottleNumber: str, location: str, db: Session = Depends(get_db)):
+@router.get('/newBottleTransaction', status_code=status.HTTP_201_CREATED)
+async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
     # decrypt the number of bottles and store it in num_bottles
-    points = decryption.decrypt(bottleNumber)
+    all_data = decryption.decrypt(data)
+    points = all_data.get('points')
+    location = all_data.get('location')
     # create a new transaction
     currentTransactionID = services.new_transaction(points, location, db)
     # random state number
