@@ -33,14 +33,14 @@ global currentTransactionID
 
 
 # new bottles transaction
-@router.get('/newBottleTransaction', status_code=status.HTTP_201_CREATED)
+@router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
 async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
     # decrypt the number of bottles and store it in num_bottles
     all_data = decryption.decrypt(data)
     points = all_data.get('points')
     location = all_data.get('location')
-    token = all_data.get('iat')
+    token = str(all_data.get('iat'))
     # check if token is already used
     if services.check_token(token, db):
         html_content = Path('app/invalidToken.html').read_text()
