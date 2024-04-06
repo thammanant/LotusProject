@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Already Use</title>
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            font-family: sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 40px;
+            margin: auto;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #d32f2f; /* Red color for failed condition */
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.2em;
+            color: #666;
+            text-align: center;
+            opacity: 0.8;
+        }
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="https://cdn-icons-png.flaticon.com/128/8439/8439932.png" alt="redeem status">
+    <h1>เข้าสู่ระบบไม่สำเร็จ</h1>
+    <h2>QR Code นี้ถูกใช้งานแล้ว</h2>
+</div>
+</body>
+</html>

@@ -108,9 +108,8 @@ def add_new_user(userID, db):
     return 'created'
 
 
-def new_transaction(points, location, db):
-    transaction = Transactions(points=points, date=datetime.now(),
-                               location=location)
+def new_transaction(points, location, time, db):
+    transaction = Transactions(points=points, token=time, location=location, date=datetime.now())
     db.add(transaction)
     db.commit()
 
@@ -174,15 +173,12 @@ def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
 
 
-# Clear all data
-def clear(db):
-    # clear the foreign key table first
-    db.query(UserTransactions).delete()
-    db.query(Redemption).delete()
-    db.query(Transactions).delete()
-    db.query(UserInfo).delete()
-    db.query(ItemList).delete()
-    db.commit()
+# check if token is already used
+def check_token(token, db):
+    transaction = db.query(Transactions).filter(Transactions.token == token).first()
+    if transaction:
+        return True
+    return False
 
 
 # Show all data in tables format

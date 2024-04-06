@@ -17,6 +17,7 @@ class Transactions(Base):
     points = Column(Integer)
     date = Column(DateTime)
     location = Column(String)
+    token = Column(String)
 
 
 class UserTransactions(Base):

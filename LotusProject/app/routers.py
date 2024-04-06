@@ -40,8 +40,14 @@ async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     all_data = decryption.decrypt(data)
     points = all_data.get('points')
     location = all_data.get('location')
+    token = all_data.get('iat')
+    # check if token is already used
+    if services.check_token(token, db):
+        html_content = Path('app/invalidToken.html').read_text()
+        return HTMLResponse(content=html_content, status_code=200)
+
     # create a new transaction
-    currentTransactionID = services.new_transaction(points, location, db)
+    currentTransactionID = services.new_transaction(points, location, token, db)
     # random state number
     STATE = random.randint(1000, 9999)
     # compose line login url
