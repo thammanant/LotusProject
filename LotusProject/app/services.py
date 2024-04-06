@@ -202,9 +202,10 @@ def show_all(db):
 
 
 def clear_all(db):
-    db.query(UserInfo).delete()
-    db.query(Transactions).delete()
     db.query(UserTransactions).delete()
     db.query(Redemption).delete()
+    db.query(UserInfo).delete()
+    db.query(Transactions).delete()
+
     db.commit()
     return 'deleted'
