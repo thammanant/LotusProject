@@ -6,6 +6,9 @@ from app.models import ItemList
 
 app = FastAPI()
 
+# remove all tables
+models.Base.metadata.drop_all(engine)
+# create all tables
 models.Base.metadata.create_all(engine)
 
 app.include_router(routers.router)
