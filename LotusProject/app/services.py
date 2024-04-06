@@ -1,6 +1,11 @@
+import os
+import random
+import string
 from datetime import datetime
+
+from dotenv import load_dotenv
+
 from app.models import Transactions, UserInfo, UserTransactions, Redemption, ItemList
-import random, string
 
 
 def generate_code():
@@ -41,6 +46,10 @@ def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
 
 
 def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
+    load_dotenv()
+    URL = os.getenv('URL')
+    REDIRECT_URI = URL + "/APIs/redeemable"
+
     payload = {
         'to': user_id,
         'messages': [
@@ -79,7 +88,7 @@ def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
                                 "action": {
                                     "type": "uri",
                                     "label": "แลกรางวัล",
-                                    "uri": "http://167.71.216.155:8000/APIs/redeemable"
+                                    "uri": REDIRECT_URI
                                 },
                                 "style": "link"
                             }
@@ -190,3 +199,12 @@ def show_all(db):
     items = db.query(ItemList).all()
 
     return users, transactions, user_transactions, redemptions, items
+
+
+def clear_all(db):
+    db.query(UserInfo).delete()
+    db.query(Transactions).delete()
+    db.query(UserTransactions).delete()
+    db.query(Redemption).delete()
+    db.commit()
+    return 'deleted'

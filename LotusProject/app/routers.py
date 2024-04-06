@@ -25,7 +25,8 @@ load_dotenv()
 LINE_LOGIN_CHANNEL_ID = os.getenv('LINE_LOGIN_CHANNEL_ID')
 LINE_LOGIN_CHANNEL_SECRET = os.getenv('LINE_LOGIN_CHANNEL_SECRET')
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
-REDIRECT_URI = os.getenv('REDIRECT_URI')
+URL = os.getenv('URL')
+REDIRECT_URI = URL + "/APIs/callback"
 
 global points
 global userID
@@ -127,14 +128,12 @@ async def redeem(db: Session = Depends(get_db)):
         return HTMLResponse(content=html_content, status_code=200)
 
 
-# Clear all data
-@router.get('/clear', status_code=status.HTTP_200_OK)
-async def clear(db: Session = Depends(get_db)):
-    services.clear(db)
-    return 'cleared'
-
-
 # Show all data in tables format
 @router.get('/show', status_code=status.HTTP_200_OK)
 async def show(db: Session = Depends(get_db)):
     return services.show_all(db)
+
+# clear all data
+@router.get('/clear', status_code=status.HTTP_200_OK)
+async def clear(db: Session = Depends(get_db)):
+    return services.clear_all(db)
