@@ -117,8 +117,8 @@ def add_new_user(userID, db):
     return 'created'
 
 
-def new_transaction(points, location, time, db):
-    transaction = Transactions(points=points, token=time, location=location, date=datetime.now())
+def new_transaction(points, location, token, db):
+    transaction = Transactions(points=points, token=token, location=location, date=datetime.now())
     db.add(transaction)
     db.commit()
 

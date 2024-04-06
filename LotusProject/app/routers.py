@@ -43,7 +43,7 @@ async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     location = all_data.get('location')
     token = str(all_data.get('iat'))
     # check if token is already used
-    if services.check_token(token, db):
+    if services.check_token(token, db) or points is None or location is None or token is None:
         html_content = Path('app/invalidToken.html').read_text()
         return HTMLResponse(content=html_content, status_code=200)
 
