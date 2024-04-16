@@ -5,7 +5,8 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
-from app.models import Transactions, UserInfo, UserTransactions, Redemption, ItemList
+from app.models import UserInfo, BottleTransaction, MachineKey, UserTransactions, ItemList, Redemption, StaffRedemption, \
+    StaffInfo
 
 
 def generate_code():
@@ -117,17 +118,17 @@ def add_new_user(userID, db):
     return 'created'
 
 
-def new_transaction(points, location, token, db):
-    transaction = Transactions(points=points, token=token, location=location, date=datetime.now())
+def new_transaction(points, machineID, token, db):
+    transaction = BottleTransaction(points=points, date=datetime.now(), machineID=machineID, token=token)
     db.add(transaction)
     db.commit()
 
     # return the transaction ID
-    return transaction.transactionID
+    return transaction.bottleTransactionID
 
 
-def map_user_transaction(userID, transactionID, db):
-    user_transaction = UserTransactions(userID=userID, transactionID=transactionID)
+def map_user_transaction(userID, bottleTransactionID, db):
+    user_transaction = UserTransactions(userID=userID, bottleTransactionID=bottleTransactionID)
     db.add(user_transaction)
     db.commit()
     return 'created'
@@ -170,7 +171,8 @@ def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     # deduct 10 points
     user.totalPoints -= 10
     # add redemption record
-    redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, date=datetime.now())
+    redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, issuedDate=datetime.now(),
+                            status='Unused', numberOfItems=1)
     db.add(redemption)
     db.commit()
 
@@ -184,28 +186,66 @@ def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
 
 # check if token is already used
 def check_token(token, db):
-    transaction = db.query(Transactions).filter(Transactions.token == token).first()
+    transaction = db.query(BottleTransaction).filter(BottleTransaction.token == token).first()
     if transaction:
         return True
     return False
 
 
+def new_staff(staffName, location, db):
+    staff = StaffInfo(staffName=staffName, location=location)
+    db.add(staff)
+    db.commit()
+    return 'created'
+
+
+def staff_redemption(staffID, redemptionID, db):
+    # check if redemptionID is valid and not redeemed
+    redemption = db.query(Redemption).filter(Redemption.redemptionID == redemptionID).first()
+    if not redemption:
+        return 'invalid redemptionID'
+    if redemption.status == 'Redeemed':
+        # get the location of the staff
+        staff = db.query(StaffInfo).filter(StaffInfo.staffID == staffID).first()
+        return f"Redemption {redemptionID} has already been redeemed by {staff.staffName} at {staff.location}"
+
+    staffRedemption = StaffRedemption(redemptionID=redemptionID, staffID=staffID)
+    # modify redemption status
+    redemption = db.query(Redemption).filter(Redemption.redemptionID == redemptionID).first()
+    redemption.status = 'Redeemed'
+    redemption.redeemedDate = datetime.now()
+    db.add(staffRedemption)
+    db.commit()
+    return 'created'
+
+
 # Show all data in tables format
 def show_all(db):
     users = db.query(UserInfo).all()
-    transactions = db.query(Transactions).all()
+    transactions = db.query(BottleTransaction).all()
     user_transactions = db.query(UserTransactions).all()
-    redemptions = db.query(Redemption).all()
     items = db.query(ItemList).all()
+    redemptions = db.query(Redemption).all()
+    staff_redemptions = db.query(StaffRedemption).all()
 
-    return users, transactions, user_transactions, redemptions, items
+    return {
+        'users': users,
+        'transactions': transactions,
+        'user_transactions': user_transactions,
+        'items': items,
+        'redemptions': redemptions,
+        'staff_redemptions': staff_redemptions
+    }
 
 
 def clear_all(db):
-    db.query(UserTransactions).delete()
-    db.query(Redemption).delete()
     db.query(UserInfo).delete()
-    db.query(Transactions).delete()
+    db.query(BottleTransaction).delete()
+    db.query(UserTransactions).delete()
+    db.query(ItemList).delete()
+    db.query(Redemption).delete()
+    db.query(StaffInfo).delete()
+    db.query(StaffRedemption).delete()
 
     db.commit()
     return 'deleted'

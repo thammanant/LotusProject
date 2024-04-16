@@ -38,9 +38,10 @@ global currentTransactionID
 async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
     # decrypt the number of bottles and store it in num_bottles
+    # TODO: Decrypt the data using public, private key
     all_data = decryption.decrypt(data)
     points = all_data.get('points')
-    location = all_data.get('location')
+    machineID = all_data.get('location')
     token = str(all_data.get('iat'))
     # check if token is already used
     if services.check_token(token, db):
@@ -48,7 +49,7 @@ async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
         return HTMLResponse(content=html_content, status_code=200)
 
     # create a new transaction
-    currentTransactionID = services.new_transaction(points, location, token, db)
+    currentTransactionID = services.new_transaction(points, machineID, token, db)
     # random state number
     STATE = random.randint(1000, 9999)
     # compose line login url
@@ -128,10 +129,17 @@ async def redeem(db: Session = Depends(get_db)):
         return HTMLResponse(content=html_content, status_code=200)
 
 
+# staff redemption
+@router.post('/staffRedemption', status_code=status.HTTP_200_OK)
+async def staffRedemption(staffID: int, redemptionID: str, db: Session = Depends(get_db)):
+    return services.staff_redemption(staffID, redemptionID, db)
+
+
 # Show all data in tables format
 @router.get('/show', status_code=status.HTTP_200_OK)
 async def show(db: Session = Depends(get_db)):
     return services.show_all(db)
+
 
 # clear all data
 @router.get('/clear', status_code=status.HTTP_200_OK)
