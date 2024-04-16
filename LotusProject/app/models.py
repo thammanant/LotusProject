@@ -58,7 +58,7 @@ class Redemption(Base):
 class StaffRedemption(Base):
     __tablename__ = "Staff Redemptions"
 
-    redemptionID = Column(String, ForeignKey('Redemption Information.redemptionID'), primary_key=True, index=True)
+    redemptionID = Column(String, ForeignKey('Redemptions.redemptionID'), primary_key=True, index=True)
     staffID = Column(Integer, ForeignKey('Staff Information.staffID'), primary_key=True, index=True)
 
 
