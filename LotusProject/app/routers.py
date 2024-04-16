@@ -114,8 +114,8 @@ async def success():
 
 # Redeem successfully
 @router.get('/redeemable', status_code=status.HTTP_200_OK)
-async def redeem(itemID: int, db: Session = Depends(get_db)):
-    redeemable = services.redeem(userID, itemID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
+async def redeem(itemID: int, n: int, db: Session = Depends(get_db)):
+    redeemable = services.redeem(userID, itemID, n, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
     if redeemable:
         html_content = Path('app/Redeemed.html').read_text()
         return HTMLResponse(content=html_content, status_code=200)

@@ -166,7 +166,7 @@ def get_points_required(itemID, db):
 
 
 # check if user have the required points to redeem
-def redeem(userID, itemID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
+def redeem(userID, itemID, n, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     # check if user have enough points to redeem
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     pointsRequired = get_points_required(itemID, db)
@@ -181,8 +181,8 @@ def redeem(userID, itemID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     # deduct n points
     user.totalPoints -= pointsRequired
     # add redemption record
-    redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, issuedDate=datetime.now(),
-                            status='Unused', numberOfItems=1)
+    redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=itemID, issuedDate=datetime.now(),
+                            status='Unused', numberOfItems=n)
     db.add(redemption)
     db.commit()
 
