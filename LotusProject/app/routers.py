@@ -96,10 +96,7 @@ def callback(request: Request, db: Session = Depends(get_db)):
             # send message to user
             services.send_message(userID, f"จำนวนขวดเพิ่ม {points} ขวด - จำนวนขวดทั้งหมดของคุณมี {totalPoints} ขวด",
                                   LINE_CHANNEL_ACCESS_TOKEN, requests)
-            # check if user can redeem
-            if totalPoints >= 10:
-                # send message to user
-                services.send_flex_message(userID, LINE_CHANNEL_ACCESS_TOKEN, requests)
+            services.send_flex_message(userID, LINE_CHANNEL_ACCESS_TOKEN, requests)
             # redirect to success page
             return RedirectResponse("/APIs/success")
         else:
@@ -117,11 +114,9 @@ async def success():
 
 # Redeem successfully
 @router.get('/redeemable', status_code=status.HTTP_200_OK)
-async def redeem(db: Session = Depends(get_db)):
-    # check if user have enough points to redeem
-    user = db.query(services.UserInfo).filter(services.UserInfo.userID == userID).first()
-    if user.totalPoints >= 10:
-        services.redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
+async def redeem(itemID: int, db: Session = Depends(get_db)):
+    redeemable = services.redeem(userID, itemID, LINE_CHANNEL_ACCESS_TOKEN, requests, db)
+    if redeemable:
         html_content = Path('app/Redeemed.html').read_text()
         return HTMLResponse(content=html_content, status_code=200)
     else:

@@ -160,16 +160,26 @@ def check_user(userID, transactionID, points, db):
     return 'created'
 
 
+def get_points_required(itemID, db):
+    item = db.query(ItemList).filter(ItemList.itemID == itemID).first()
+    return item.pointsRequired
+
+
 # check if user have the required points to redeem
-def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
+def redeem(userID, itemID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
+    # check if user have enough points to redeem
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
+    pointsRequired = get_points_required(itemID, db)
+    if user.totalPoints < pointsRequired:
+        return False
+
     while True:
         referenceCode = generate_code()
         redemption = db.query(Redemption).filter(Redemption.redemptionID == referenceCode).first()
         if not redemption:
             break
-    # deduct 10 points
-    user.totalPoints -= 10
+    # deduct n points
+    user.totalPoints -= pointsRequired
     # add redemption record
     redemption = Redemption(redemptionID=referenceCode, userID=userID, itemID=1, issuedDate=datetime.now(),
                             status='Unused', numberOfItems=1)
@@ -182,6 +192,7 @@ def redeem(userID, LINE_CHANNEL_ACCESS_TOKEN, requests, db):
     # send message to user
     send_message(userID, f"คุณได้รับ 1 {name} - {referenceCode}", LINE_CHANNEL_ACCESS_TOKEN, requests)
     send_message(userID, f"จำนวนขวดสะสมของคุณคงเหลือ {user.totalPoints} ขวด", LINE_CHANNEL_ACCESS_TOKEN, requests)
+    return True
 
 
 # check if token is already used
