@@ -7,6 +7,9 @@ from app.models import UserInfo, ItemList, MachineKey, BottleTransaction, UserTr
 def generate_admin(app, engine):
     admin = Admin(app, engine)
 
+    # set admin panel name
+    admin.title = 'Lotus Admin'
+
     class UserInfoView(ModelView, model=UserInfo):
         column_list = ('userID', 'accountType', 'totalPoints')
         column_searchable_list = ('userID', 'accountType', 'totalPoints')
