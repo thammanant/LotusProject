@@ -3,8 +3,7 @@ from app import models
 from app.database import engine, SessionLocal
 import app.routers as routers
 from app.models import ItemList, MachineKey
-from app.view import UserInfoView, ItemListView, MachineKeyView, BottleTransactionView, UserTransactionsView, RedemptionView, StaffRedemptionView, StaffInfoView
-from sqladmin import Admin
+from app.view import generate_admin
 
 app = FastAPI()
 
@@ -35,16 +34,8 @@ with SessionLocal() as db:
         db.add(machine1)
         db.commit()
 
-admin = Admin(app, engine)
-
-admin.add_view(UserInfoView)
-admin.add_view(ItemListView)
-admin.add_view(MachineKeyView)
-admin.add_view(BottleTransactionView)
-admin.add_view(UserTransactionsView)
-admin.add_view(RedemptionView)
-admin.add_view(StaffRedemptionView)
-admin.add_view(StaffInfoView)
+# create admin
+generate_admin(app, engine)
 
 # if __name__ == '__main__':
 #     import uvicorn
