@@ -132,5 +132,5 @@ async def staffRedemption(staffID: int, redemptionID: str, db: Session = Depends
 
 # new staff
 @router.post('/newStaff', status_code=status.HTTP_200_OK)
-async def newStaff(staffID: int, location: str, db: Session = Depends(get_db)):
-    return services.new_staff(staffID, location, db)
+async def newStaff(staffName: str, location: str, db: Session = Depends(get_db)):
+    return services.new_staff(staffName, location, db)
