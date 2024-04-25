@@ -130,13 +130,7 @@ async def staffRedemption(staffID: int, redemptionID: str, db: Session = Depends
     return services.staff_redemption(staffID, redemptionID, db)
 
 
-# Show all data in tables format
-@router.get('/show', status_code=status.HTTP_200_OK)
-async def show(db: Session = Depends(get_db)):
-    return services.show_all(db)
-
-
-# clear all data
-@router.get('/clear', status_code=status.HTTP_200_OK)
-async def clear(db: Session = Depends(get_db)):
-    return services.clear_all(db)
+# new staff
+@router.post('/newStaff', status_code=status.HTTP_200_OK)
+async def newStaff(staffID: int, location: str, db: Session = Depends(get_db)):
+    return services.new_staff(staffID, location, db)

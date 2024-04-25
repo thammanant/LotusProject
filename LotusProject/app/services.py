@@ -228,35 +228,3 @@ def staff_redemption(staffID, redemptionID, db):
     db.add(staffRedemption)
     db.commit()
     return 'created'
-
-
-# Show all data in tables format
-def show_all(db):
-    users = db.query(UserInfo).all()
-    transactions = db.query(BottleTransaction).all()
-    user_transactions = db.query(UserTransactions).all()
-    items = db.query(ItemList).all()
-    redemptions = db.query(Redemption).all()
-    staff_redemptions = db.query(StaffRedemption).all()
-
-    return {
-        'users': users,
-        'transactions': transactions,
-        'user_transactions': user_transactions,
-        'items': items,
-        'redemptions': redemptions,
-        'staff_redemptions': staff_redemptions
-    }
-
-
-def clear_all(db):
-    db.query(UserInfo).delete()
-    db.query(BottleTransaction).delete()
-    db.query(UserTransactions).delete()
-    db.query(ItemList).delete()
-    db.query(Redemption).delete()
-    db.query(StaffInfo).delete()
-    db.query(StaffRedemption).delete()
-
-    db.commit()
-    return 'deleted'
