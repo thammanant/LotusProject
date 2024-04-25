@@ -33,6 +33,29 @@ global userID
 global currentTransactionID
 
 
+# new bottles transaction Test
+@router.get('/newBottleTransactionTest', status_code=status.HTTP_200_OK)
+async def newBottleTransactionTest(pointsInput: int, machineID: str, token: str, db: Session = Depends(get_db)):
+    global points, currentTransactionID
+    points = pointsInput
+
+    # check if token is already used
+    if services.check_token(token, db):
+        html_content = Path('app/invalidToken.html').read_text()
+        return HTMLResponse(content=html_content, status_code=200)
+
+    # create a new transaction
+    currentTransactionID = services.new_transaction(points, machineID, token, db)
+    # random state number
+    STATE = random.randint(1000, 9999)
+    # compose line login url
+    line_login_url = (
+        f"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={LINE_LOGIN_CHANNEL_ID}"
+        f"&redirect_uri={REDIRECT_URI}&state={STATE}&scope=openid%20profile")
+    print(line_login_url)
+    return RedirectResponse(line_login_url)
+
+
 # new bottles transaction
 @router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
 async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
@@ -41,7 +64,7 @@ async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
     # TODO: Decrypt the data using public, private key
     all_data = decryption.decrypt(data)
     points = all_data.get('points')
-    machineID = all_data.get('location')
+    machineID = all_data.get('machineID')
     token = str(all_data.get('iat'))
     # check if token is already used
     if services.check_token(token, db):
