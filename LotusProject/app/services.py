@@ -49,14 +49,14 @@ def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
 def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
     load_dotenv()
     URL = os.getenv('URL')
-    REDIRECT_URI = URL + "/APIs/redeemable"
+    REDIRECT_URI = URL + "/APIs/redeemable?itemID=1&n=1"
 
     payload = {
         'to': user_id,
         'messages': [
             {
                 "type": "flex",
-                "altText": "This is a Flex Message",
+                "altText": "แลกรับรางวัลทันที",
                 "contents": {
                     "type": "bubble",
                     "hero": {
