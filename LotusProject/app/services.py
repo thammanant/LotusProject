@@ -5,7 +5,7 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
-from app.models import UserInfo, BottleTransaction, MachineKey, UserTransactions, ItemList, Redemption, StaffRedemption, \
+from app.models import UserInfo, BottleTransaction, UserTransactions, ItemList, Redemption, StaffRedemption, \
     StaffInfo
 
 
@@ -46,6 +46,7 @@ def send_message(user_id, message, LINE_CHANNEL_ACCESS_TOKEN, requests):
         print("Failed to send message:", response.json())
 
 
+# TODO: implement carousel
 def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
     load_dotenv()
     URL = os.getenv('URL')
@@ -99,6 +100,60 @@ def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
             }
         ]
     }
+
+    # payload = {
+    #     'to': user_id,
+    #     'messages': [
+    #         {
+    #             "type": "flex",
+    #             "altText": "แลกรับรางวัลทันที",
+    #             "contents": {
+    #                 "type": "carousel",
+    #                 "contents": [
+    #                     {
+    #                         "type": "bubble",
+    #                         "hero": {
+    #                             "type": "image",
+    #                             "url": "https://img.freepik.com/free-vector/detailed-point-exchange_23-2148845560.jpg?w=1480"
+    #                                    "&t=st=1709981242~exp=1709981842~hmac"
+    #                                    "=985a6b4705e20a1c865ae97b173e56419ea3a120ba849f5415fc3203be371ce9",
+    #                             "size": "full",
+    #                             "aspectRatio": "20:13"
+    #                         },
+    #                         "body": {
+    #                             "type": "box",
+    #                             "layout": "baseline",
+    #                             "contents": [
+    #                                 {
+    #                                     "type": "text",
+    #                                     "text": "สะสม 10 ขวดเพื่อแลกรางวัล",
+    #                                     "size": "md",
+    #                                     "weight": "regular",
+    #                                     "align": "center"
+    #                                 }
+    #                             ]
+    #                         },
+    #                         "footer": {
+    #                             "type": "box",
+    #                             "layout": "vertical",
+    #                             "contents": [
+    #                                 {
+    #                                     "type": "button",
+    #                                     "action": {
+    #                                         "type": "uri",
+    #                                         "label": "แลกรางวัล",
+    #                                         "uri": REDIRECT_URI
+    #                                     },
+    #                                     "style": "link"
+    #                                 }
+    #                             ]
+    #                         }
+    #                     }
+    #                 ]
+    #             }
+    #         }
+    #     ]
+    # }
 
     url = 'https://api.line.me/v2/bot/message/push'
     headers = {
