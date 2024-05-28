@@ -67,6 +67,9 @@ async def newBottleTransaction(machineID: int, data: str, db: Session = Depends(
     points = all_data.get('points')
     machineID = all_data.get('machineID')
     token = str(all_data.get('iat'))
+    # check if the machine ID and machineID in the data are the same
+    if machineID != machineID:
+        raise HTTPException(status_code=400, detail="Machine ID does not match")
     # check if token is already used
     if services.check_token(token, db):
         html_content = Path('app/invalidToken.html').read_text()
