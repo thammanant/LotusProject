@@ -1,18 +1,7 @@
-import os
-from dotenv import load_dotenv
-import jwt
-
-
-class Decryption:
-    def __init__(self):
-        load_dotenv()
-        self.key = os.getenv('KEY')
-
-    def decrypt(self, encrypted_message):
-        # decrypt the data using the key
-        decode = jwt.decode(encrypted_message, self.key, algorithms=['HS256'])
-        return decode
-
+def decrypt(key, encrypted_message):
+    # decrypt the data using the key
+    decode = encrypted_message
+    return decode
 
 # if __name__ == "__main__":
 #     decryption = Decryption()

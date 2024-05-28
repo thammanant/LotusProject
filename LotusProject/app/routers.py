@@ -11,7 +11,7 @@ from starlette.responses import HTMLResponse
 
 from app import services
 from app.database import getDB
-from app.decryption import Decryption
+from app.decryption import decrypt
 
 router = APIRouter(
     prefix="/APIs",
@@ -58,11 +58,12 @@ async def newBottleTransactionTest(pointsInput: int, machineID: str, token: str,
 
 # new bottles transaction
 @router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
-async def newBottleTransaction(data: str, db: Session = Depends(get_db)):
+async def newBottleTransaction(machineID: int, data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
+    # get the private key for decryption for machine ID
+    key = services.get_key(machineID, db)
     # decrypt the number of bottles and store it in num_bottles
-    # TODO: Decrypt the data using public, private key
-    all_data = decryption.decrypt(data)
+    all_data = decrypt(key, data)
     points = all_data.get('points')
     machineID = all_data.get('machineID')
     token = str(all_data.get('iat'))

@@ -232,3 +232,8 @@ def staff_redemption(staffID, redemptionID, db):
     db.add(staffRedemption)
     db.commit()
     return 'created'
+
+
+def get_key(machineID, db):
+    machine = db.query(StaffInfo).filter(StaffInfo.staffID == machineID).first()
+    return machine.key
