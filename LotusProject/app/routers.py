@@ -58,17 +58,17 @@ async def newBottleTransactionTest(pointsInput: int, machineID: str, token: str,
 
 # new bottles transaction
 @router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
-async def newBottleTransaction(machineID: int, data: str, db: Session = Depends(get_db)):
+async def newBottleTransaction(machineIDin: int, data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
     # get the private key for decryption for machine ID
-    key = services.get_key(machineID, db)
+    key = services.get_key(machineIDin, db)
     # decrypt the number of bottles and store it in num_bottles
     all_data = decrypt(key, data)
     points = all_data.get('points')
     machineID = all_data.get('machineID')
     token = str(all_data.get('iat'))
     # check if the machine ID and machineID in the data are the same
-    if machineID != machineID:
+    if machineIDin != machineID:
         raise HTTPException(status_code=400, detail="Machine ID does not match")
     # check if token is already used
     if services.check_token(token, db):
