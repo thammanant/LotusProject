@@ -5,7 +5,7 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
-from app.decryption import new_key_pair, salt
+from app.decryption import new_key_pair
 from app.models import UserInfo, BottleTransaction, UserTransactions, ItemList, Redemption, StaffRedemption, \
     StaffInfo, MachineKey
 

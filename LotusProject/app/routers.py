@@ -19,7 +19,6 @@ router = APIRouter(
 )
 
 get_db = getDB
-decryption = Decryption()
 load_dotenv()
 
 LINE_LOGIN_CHANNEL_ID = os.getenv('LINE_LOGIN_CHANNEL_ID')
@@ -161,3 +160,9 @@ async def staffRedemption(staffID: int, redemptionID: str, db: Session = Depends
 @router.post('/newStaff', status_code=status.HTTP_200_OK)
 async def newStaff(staffName: str, location: str, db: Session = Depends(get_db)):
     return services.new_staff(staffName, location, db)
+
+
+# new machine
+@router.post('/newMachine', status_code=status.HTTP_200_OK)
+async def newMachine(location: str, db: Session = Depends(get_db)):
+    return services.new_machine(location, db)
