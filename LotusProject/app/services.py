@@ -5,7 +5,6 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
-from app.decryption import new_key_pair
 from app.models import UserInfo, BottleTransaction, UserTransactions, ItemList, Redemption, StaffRedemption, \
     StaffInfo, MachineKey
 
@@ -239,11 +238,3 @@ def get_key(machineID, db):
     machine = db.query(StaffInfo).filter(StaffInfo.staffID == machineID).first()
     return machine.key
 
-
-def new_machine(machineID, db):
-    key = new_key_pair()
-    newPair = MachineKey(machineID=machineID, key=key.private)
-    db.add(newPair)
-    db.commit()
-
-    return 'created' + key.public

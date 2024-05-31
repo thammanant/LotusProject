@@ -59,23 +59,19 @@ async def newBottleTransactionTest(pointsInput: int, machineID: str, token: str,
 @router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
 async def newBottleTransaction(machineIDin: int, data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
-    # get the private key for decryption for machine ID
+    # get the key for decryption for machine ID
     key = services.get_key(machineIDin, db)
     # decrypt the number of bottles and store it in num_bottles
     all_data = decrypt(key, data)
     points = all_data.get('points')
-    machineID = all_data.get('machineID')
     token = str(all_data.get('iat'))
-    # check if the machine ID and machineID in the data are the same
-    if machineIDin != machineID:
-        raise HTTPException(status_code=400, detail="Machine ID does not match")
     # check if token is already used
     if services.check_token(token, db):
         html_content = Path('app/invalidToken.html').read_text()
         return HTMLResponse(content=html_content, status_code=200)
 
     # create a new transaction
-    currentTransactionID = services.new_transaction(points, machineID, token, db)
+    currentTransactionID = services.new_transaction(points, machineIDin, token, db)
     # random state number
     STATE = random.randint(1000, 9999)
     # compose line login url
@@ -162,7 +158,3 @@ async def newStaff(staffName: str, location: str, db: Session = Depends(get_db))
     return services.new_staff(staffName, location, db)
 
 
-# new machine
-@router.post('/newMachine', status_code=status.HTTP_200_OK)
-async def newMachine(location: str, db: Session = Depends(get_db)):
-    return services.new_machine(location, db)

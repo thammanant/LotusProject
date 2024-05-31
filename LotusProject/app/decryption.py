@@ -1,15 +1,13 @@
+import jwt
+
+
 def decrypt(key, encrypted_message):
     # decrypt the data using the key
-    decode = encrypted_message
+    decode = jwt.decode(encrypted_message, key, algorithms=['HS256'])
     return decode
 
 
-def new_key_pair():
-    # generate a new key pair
-    # TODO:
-    return "new key pair"
-
-
 # if __name__ == "__main__":
-#     decryption = Decryption()
-#     print(decryption.decrypt("82797263122673622252398609254816336932239895641311134141567714134294435441920468572069431727612875451590765722563750610444743739647654043451189443008711099411881516504023383958426332148078113117728534264956495158706799921811190059563764862096717623117364576125108214657489794083908300707317521383930137922526"))
+#     print(decrypt("c435d980d70d", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+#                                   ".eyJwb2ludHMiOjEwLCJpYXQiOjE3MTcxNDkzNzQuMDA5MzQ4Mn0"
+#                                   ".3JTmUQoipyt1RQjyfeh4h4RZcrioMj1Q290SWT-xgPw"))

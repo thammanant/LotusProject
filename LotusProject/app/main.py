@@ -29,7 +29,7 @@ with SessionLocal() as db:
     # if empty, add machine key
     if not machine:
         # pre populate the database
-        machine1 = MachineKey(machineID="1", key='1234')
+        machine1 = MachineKey(machineID="1", key='c435d980d70d')
 
         db.add(machine1)
         db.commit()
