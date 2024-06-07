@@ -57,7 +57,7 @@ async def newBottleTransactionTest(pointsInput: int, machineID: str, token: str,
 
 # new bottles transaction
 @router.get('/newBottleTransaction', status_code=status.HTTP_200_OK)
-async def newBottleTransaction(machineIDin: int, data: str, db: Session = Depends(get_db)):
+async def newBottleTransaction(machineIDin: str, data: str, db: Session = Depends(get_db)):
     global points, currentTransactionID
     # get the key for decryption for machine ID
     key = services.get_key(machineIDin, db)

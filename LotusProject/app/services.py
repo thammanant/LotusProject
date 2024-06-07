@@ -235,6 +235,6 @@ def staff_redemption(staffID, redemptionID, db):
 
 
 def get_key(machineID, db):
-    machine = db.query(StaffInfo).filter(StaffInfo.staffID == machineID).first()
-    return machine.key
+    machineKey = db.query(MachineKey).filter(MachineKey.machineID == machineID).first()
+    return machineKey.key
 
