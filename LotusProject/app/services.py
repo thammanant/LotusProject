@@ -103,7 +103,6 @@ def send_flex_message(user_id, LINE_CHANNEL_ACCESS_TOKEN, requests):
         ]
     }
 
-
     url = 'https://api.line.me/v2/bot/message/push'
     headers = {
         'Content-Type': 'application/json',
@@ -139,6 +138,7 @@ def map_user_transaction(userID, bottleTransactionID, db):
 
 
 def add_points(userID, points, db):
+    assert points.isdigit() and int(points) >= 0
     user = db.query(UserInfo).filter(UserInfo.userID == userID).first()
     user.totalPoints += int(points)
     db.commit()
@@ -236,5 +236,5 @@ def staff_redemption(staffID, redemptionID, db):
 
 def get_key(machineID, db):
     machineKey = db.query(MachineKey).filter(MachineKey.machineID == machineID).first()
+    assert machineKey is not None
     return machineKey.key
-

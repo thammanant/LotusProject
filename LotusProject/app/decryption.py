@@ -4,6 +4,8 @@ import jwt
 def decrypt(key, encrypted_message):
     # decrypt the data using the key
     decode = jwt.decode(encrypted_message, key, algorithms=['HS256'])
+    assert decode.get('points') is not None
+    assert decode.get('iat') is not None
     return decode
 
 
